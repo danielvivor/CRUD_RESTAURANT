@@ -110,3 +110,10 @@ a {
   width: 42px;
   height: 42px;
 }
+
+.logo-text {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  letter-spacing: 0.15rem;
+  text-transform: uppercase;
+}
