@@ -148,3 +148,10 @@ if (viewResForm) {
         resResultsContainer.innerHTML = html;
     });
 }
+
+// Expose delete function globally so the inline onclick works
+window.deleteBooking = function(id) {
+    reservations = reservations.filter(r => r.id !== id);
+    save("reservations", reservations);
+    document.getElementById("view-reservation-form").dispatchEvent(new Event("submit"));
+}
