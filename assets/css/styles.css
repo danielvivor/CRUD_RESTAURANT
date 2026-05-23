@@ -305,3 +305,11 @@ a {
     transform: translateX(-50%);
   }
 }
+
+/* Footer */
+.site-footer {
+  background: var(--color-black);
+  color: var(--color-text-light);
+  padding: var(--space-2xl) var(--space-lg);
+  text-align: center;
+}
