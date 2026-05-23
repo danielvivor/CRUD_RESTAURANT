@@ -52,3 +52,11 @@ html {
   font-size: 62.5%;
   scroll-behavior: smooth;
 }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  background: var(--color-bg-main);
+  color: var(--color-text-main);
+  line-height: 1.6;
+}
