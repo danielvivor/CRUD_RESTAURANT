@@ -350,6 +350,13 @@ a {
   cursor: pointer;
 }
 
+.form-row-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-md);
+}
+
+
 /* Footer */
 .site-footer {
   background: var(--color-black);
