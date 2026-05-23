@@ -248,3 +248,6 @@ if (contactForm) {
         contactForm.reset();
     });
 }
+
+// Initialize
+renderReviews();
