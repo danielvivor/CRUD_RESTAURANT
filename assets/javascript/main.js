@@ -37,3 +37,12 @@ document.querySelectorAll(".menu-scroll-track").forEach(track => {
         track.appendChild(clone);
     });
 });
+
+// Reservations (Dynamic Tables & Identifier)
+let reservations = load("reservations");
+
+const multiResForm = document.getElementById("multi-reservation-form");
+const addTableBtn = document.getElementById("add-table-btn");
+const tablesContainer = document.getElementById("tables-container");
+const tableTemplate = document.getElementById("table-row-template");
+const successMsg = document.getElementById("booking-success-msg");
