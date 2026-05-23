@@ -69,3 +69,20 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+/* Accessibility */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 1rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--color-gold);
+  color: var(--color-black);
+  border-radius: var(--radius-sm);
+  z-index: 1000;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
