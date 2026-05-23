@@ -154,3 +154,9 @@ a {
   border: none;
   cursor: pointer;
 }
+
+.nav-toggle-bar {
+  width: 22px;
+  height: 2px;
+  background: var(--color-text-light);
+}
