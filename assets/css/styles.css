@@ -105,3 +105,8 @@ a {
   align-items: center;
   gap: var(--space-sm);
 }
+
+#logo-img {
+  width: 42px;
+  height: 42px;
+}
