@@ -356,6 +356,10 @@ a {
   gap: var(--space-md);
 }
 
+.management-sidebar {
+  position: sticky;
+  top: 100px;
+}
 
 /* Footer */
 .site-footer {
