@@ -125,3 +125,8 @@ a {
   font-size: var(--fs-sm);
   text-transform: uppercase;
 }
+
+.nav-container a {
+  color: var(--color-text-light);
+  position: relative;
+}
