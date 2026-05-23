@@ -246,3 +246,11 @@ a {
 .menu-section {
   padding: var(--space-2xl) var(--space-lg);
 }
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
