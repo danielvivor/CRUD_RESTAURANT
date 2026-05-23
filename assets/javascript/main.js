@@ -75,3 +75,40 @@ function updateTableNumbers() {
         }
     });
 }
+
+// Handle Reservation Submit
+if (multiResForm) {
+    multiResForm.addEventListener("submit", e => {
+        e.preventDefault();
+
+        const bookingEmail = document.getElementById("booking-email").value.trim();
+        const tableCards = tablesContainer.querySelectorAll(".table-item");
+        
+        let bookingDetails = {
+            id: crypto.randomUUID(),
+            email: bookingEmail,
+            tables: []
+        };
+
+        tableCards.forEach(card => {
+            const date = card.querySelector(".table-date").value;
+            const time = card.querySelector(".table-time").value;
+            const guests = card.querySelector(".table-guests").value;
+            bookingDetails.tables.push({ date, time, guests });
+        });
+
+        reservations.push(bookingDetails);
+        save("reservations", reservations);
+
+        // Reset UI
+        multiResForm.reset();
+        
+        // Remove all extra tables, keep only the first one
+        while (tablesContainer.children.length > 1) {
+            tablesContainer.removeChild(tablesContainer.lastChild);
+        }
+        
+        successMsg.style.display = "block";
+        setTimeout(() => successMsg.style.display = "none", 4000);
+    });
+}
