@@ -328,6 +328,14 @@ a {
   margin-bottom: var(--space-md);
 }
 
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-gold);
+  padding-bottom: var(--space-xs);
+}
+
 /* Footer */
 .site-footer {
   background: var(--color-black);
