@@ -38,3 +38,12 @@
 
   --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
+
+/* Default browser reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
