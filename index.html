@@ -71,6 +71,7 @@
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
   <div class="page-wrapper">
+
     <header class="header-container">
       <a href="hero" class="logo-container">
         <img src="assets/images/logo/logo.png" alt="Nala Restaurant logo" id="logo-img">
@@ -253,9 +254,31 @@
 
             <div id="reservation-results" style="margin-top: 1rem;"></div>
           </article>
-
         </div>
       </section>
+
+      <template id="table-row-template">
+        <div class="table-entry-card table-item">
+          <div class="entry-header">
+            <span class="table-number">Table #</span>
+            <button type="button" class="remove-table" aria-label="Remove Table">&times;</button>
+          </div>
+          <div class="form-row-grid">
+            <div class="form-field">
+              <label>Date</label>
+              <input type="date" class="table-date" required />
+            </div>
+            <div class="form-field">
+              <label>Time</label>
+              <input type="time" class="table-time" required />
+            </div>
+            <div class="form-field">
+              <label>Guests</label>
+              <input type="number" class="table-guests" min="1" max="12" value="2" required />
+            </div>
+          </div>
+        </div>
+      </template>
     </main>
 
   </div>
