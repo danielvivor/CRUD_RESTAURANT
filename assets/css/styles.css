@@ -336,6 +336,12 @@ a {
   padding-bottom: var(--space-xs);
 }
 
+.table-number {
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  color: var(--color-gold-dark);
+}
+
 /* Footer */
 .site-footer {
   background: var(--color-black);
