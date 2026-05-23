@@ -319,6 +319,15 @@ a {
   gap: var(--space-2xl);
 }
 
+.table-entry-card {
+  background: var(--color-bg-card);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: var(--space-md);
+}
+
 /* Footer */
 .site-footer {
   background: var(--color-black);
