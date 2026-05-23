@@ -200,39 +200,45 @@
                   <input type="email" id="booking-email" name="booking-email" placeholder="name@example.com" required />
                 </div>
               </div>
+
+              <div id="tables-container">
+                <div class="table-entry-card table-item">
+                  <div class="entry-header">
+                    <span class="table-number">Table #1</span>
+                  </div>
+                  <div class="form-row-grid">
+                    <div class="form-field">
+                      <label>Date</label>
+                      <input type="date" class="table-date" required />
+                    </div>
+                    <div class="form-field">
+                      <label>Time</label>
+                      <input type="time" class="table-time" required />
+                    </div>
+                    <div class="form-field">
+                      <label>Guests</label>
+                      <input type="number" class="table-guests" min="1" max="12" value="2" required />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions" style="margin-top: 1rem;">
+                <button type="button" id="add-table-btn" class="btn btn-outline full-width"
+                  style="margin-bottom: 1rem;">+ Add
+                  another Table</button>
+                <button type="submit" class="btn btn-primary full-width">Confirm Booking(s)</button>
+              </div>
+
+              <div id="booking-success-msg" class="result-card"
+                style="display: none; margin-top: 1rem; border-color: #27ae60;">
+                <div class="status-badge">Success</div>
+                <p>Your booking has been saved!</p>
+              </div>
             </form>
           </article>
 
         </div>
-
-        <div id="tables-container">
-          <div class="table-entry-card table-item">
-            <div class="entry-header">
-              <span class="table-number">Table #1</span>
-            </div>
-            <div class="form-row-grid">
-              <div class="form-field">
-                <label>Date</label>
-                <input type="date" class="table-date" required />
-              </div>
-              <div class="form-field">
-                <label>Time</label>
-                <input type="time" class="table-time" required />
-              </div>
-              <div class="form-field">
-                <label>Guests</label>
-                <input type="number" class="table-guests" min="1" max="12" value="2" required />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-actions" style="margin-top: 1rem;">
-          <button type="button" id="add-table-btn" class="btn btn-outline full-width" style="margin-bottom: 1rem;">+ Add
-            another Table</button>
-          <button type="submit" class="btn btn-primary full-width">Confirm Booking(s)</button>
-        </div>
-
       </section>
     </main>
 
