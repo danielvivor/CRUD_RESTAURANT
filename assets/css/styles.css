@@ -242,3 +242,7 @@ a {
 #menu-heading {
   text-align: center;
 }
+
+.menu-section {
+  padding: var(--space-2xl) var(--space-lg);
+}
