@@ -1,2 +1,40 @@
 /* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Simonetta:ital,wght@0,400;0,900;1,400;1,900&display=swap');
+
+/* Design tokens */
+:root {
+  --font-heading: "Simonetta", serif;
+  --font-body: "Inter", sans-serif;
+
+  --color-gold: #d9c49a;
+  --color-gold-dark: #bfa87a;
+  --color-black: #000000;
+  --color-black-soft: #111111;
+  --color-bg-main: #f5f5f3;
+  --color-bg-card: #ffffff;
+  --color-border: #e0e0dd;
+  --color-text-main: #222222;
+  --color-text-muted: #666666;
+  --color-text-light: #f2f2f2;
+
+  --space-2xs: 0.4rem;
+  --space-xs: 0.8rem;
+  --space-sm: 1.2rem;
+  --space-md: 1.6rem;
+  --space-lg: 2.4rem;
+  --space-xl: 3.2rem;
+  --space-2xl: 4rem;
+
+  --fs-xs: 1.2rem;
+  --fs-sm: 1.4rem;
+  --fs-md: 1.6rem;
+  --fs-lg: 2rem;
+  --fs-xl: 2.8rem;
+  --fs-2xl: 3.6rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
