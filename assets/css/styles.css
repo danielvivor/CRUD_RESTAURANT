@@ -289,3 +289,10 @@ a {
   width: max-content; /* Add this line to force a single horizontal row */
   animation: scroll-track 22s linear infinite;
 }
+
+.menu-scroll-track img {
+  width: 180px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
