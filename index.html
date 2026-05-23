@@ -44,6 +44,26 @@
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <!-- Structured Data (helps Google understand the business) -->
+  <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Restaurant",
+        "name": "Nala Restaurant",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "123 Gold Street",
+          "addressLocality": "Munich",
+          "postalCode": "80331",
+          "addressCountry": "DE"
+        },
+        "servesCuisine": "International, Intercontinental, Fusion",
+        "url": "https://www.example.com/",
+        "telephone": "+49-000-000000",
+        "openingHours": ["Wed-Fri 10:00-22:00", "Sat-Sun 12:00-00:00"]
+      }
+    </script>
 </head>
 
 <body></body>
