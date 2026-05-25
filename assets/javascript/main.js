@@ -28,12 +28,12 @@ if (navToggle && navContainer) {
 document.querySelectorAll(".menu-scroll-track").forEach(track => {
     // Get all the images currently inside the track
     const images = Array.from(track.children);
-    
+
     // Clone each image and append it to the SAME track
     images.forEach(img => {
         const clone = img.cloneNode(true);
         // Optional: Hide clones from screen readers so they aren't announced twice
-        clone.setAttribute("aria-hidden", "true"); 
+        clone.setAttribute("aria-hidden", "true");
         track.appendChild(clone);
     });
 });
@@ -83,7 +83,7 @@ if (multiResForm) {
 
         const bookingEmail = document.getElementById("booking-email").value.trim();
         const tableCards = tablesContainer.querySelectorAll(".table-item");
-        
+
         let bookingDetails = {
             id: crypto.randomUUID(),
             email: bookingEmail,
@@ -102,12 +102,12 @@ if (multiResForm) {
 
         // Reset UI
         multiResForm.reset();
-        
+
         // Remove all extra tables, keep only the first one
         while (tablesContainer.children.length > 1) {
             tablesContainer.removeChild(tablesContainer.lastChild);
         }
-        
+
         successMsg.style.display = "block";
         setTimeout(() => successMsg.style.display = "none", 4000);
     });
@@ -121,10 +121,10 @@ if (viewResForm) {
     viewResForm.addEventListener("submit", e => {
         e.preventDefault();
         const searchEmail = document.getElementById("search-email").value.trim();
-        
+
         // Find all bookings matching the email
         const userBookings = reservations.filter(r => r.email === searchEmail);
-        
+
         if (userBookings.length === 0) {
             resResultsContainer.innerHTML = `<p style="color: #d9534f;">No bookings found for ${searchEmail}.</p>`;
             return;
@@ -134,26 +134,43 @@ if (viewResForm) {
         let html = "";
         userBookings.forEach(booking => {
             html += `
-                <div class="result-card">
-                    <div class="status-badge">Confirmed</div>
-                    <p><strong>Booking ID:</strong> ${booking.id.split('-')[0]}</p>
-                    <p><strong>Tables Booked:</strong> ${booking.tables.length}</p>
-                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 0.9em; color: var(--color-text-muted);">
-                        ${booking.tables.map((t, i) => `<li>Table ${i+1}: ${t.date} at ${t.time} for ${t.guests}</li>`).join('')}
-                    </ul>
-                    <button class="btn-outline full-width" style="margin-top: 1rem; padding: 0.5rem;" onclick="deleteBooking('${booking.id}')">Cancel Booking</button>
-                </div>
-            `;
+        <div class="result-card">
+            <div class="status-badge">Confirmed</div>
+            <p><strong>Booking ID:</strong> ${booking.id.split('-')[0]}</p>
+            <p><strong>Tables Booked:</strong> ${booking.tables.length}</p>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 0.9em; color: var(--color-text-muted);">
+                ${booking.tables.map((t, i) => `<li>Table ${i + 1}: ${t.date} at ${t.time} for ${t.guests}</li>`).join('')}
+            </ul>
+            
+            <button class="btn-outline full-width target-cancel-btn" style="margin-top: 1rem; padding: 0.5rem;" data-id="${booking.id}">
+                Cancel Booking
+            </button>
+        </div>
+    `;
         });
         resResultsContainer.innerHTML = html;
     });
 }
 
-// Expose delete function globally so the inline onclick works
-window.deleteBooking = function(id) {
-    reservations = reservations.filter(r => r.id !== id);
-    save("reservations", reservations);
-    document.getElementById("view-reservation-form").dispatchEvent(new Event("submit"));
+// Secure Event Delegation for Deleting a Booking from the Database
+if (resResultsContainer) {
+    resResultsContainer.addEventListener("click", e => {
+        // Check if the user specifically clicked our cancel button
+        if (e.target.classList.contains("target-cancel-btn")) {
+            const bookingId = e.target.dataset.id;
+            
+            // Remove the booking entirely from your data array
+            reservations = reservations.filter(r => r.id !== bookingId);
+            
+            // Commit the changes to storage
+            save("reservations", reservations);
+            
+            // 3. Re-trigger the search submit to refresh the view
+            if (viewResForm) {
+                viewResForm.dispatchEvent(new Event("submit"));
+            }
+        }
+    });
 }
 
 // Reviews
@@ -164,7 +181,7 @@ const reviewsList = document.getElementById("reviews-list");
 const latestReviews = document.getElementById("latest-reviews");
 
 function renderReviews() {
-    if(reviewsList) {
+    if (reviewsList) {
         reviewsList.innerHTML = reviews.map(r => `
             <div class="review-card">
                 <div class="review-stars">${stars(r.rating || 0)}</div>
@@ -178,7 +195,7 @@ function renderReviews() {
         `).join("");
     }
 
-    if(latestReviews) {
+    if (latestReviews) {
         const lastThree = [...reviews].slice(-3).reverse();
         latestReviews.innerHTML = lastThree.map(r => `
             <div class="testimonial-card">
@@ -218,7 +235,7 @@ if (reviewForm) {
     });
 }
 
-if(reviewsList) {
+if (reviewsList) {
     reviewsList.addEventListener("click", e => {
         const id = e.target.dataset.id;
         if (e.target.classList.contains("edit-btn")) {
