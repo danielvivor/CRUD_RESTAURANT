@@ -197,7 +197,7 @@
                 <div class="dashboard-grid">
 
                     <article class="dashboard-column">
-                        <form id="multi-reservation-form">
+                        <form id="multi-reservation-form"> {% csrf_token %}
                             <div class="table-entry-card" style="margin-bottom: 1rem; border-color: var(--color-gold);">
                                 <div class="form-field">
                                     <label for="booking-email">Booking Email*</label>
