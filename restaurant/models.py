@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 from django.contrib.auth.models import User
 
-class Reservation(models.fields.Model):
+class Reservation(models.Model):
     # Linking the reservation to a user helps with the role-based access requirements
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     email = models.EmailField()
@@ -15,7 +15,7 @@ class Reservation(models.fields.Model):
     def __str__(self):
         return f"Reservation for {self.email} on {self.date}"
 
-class Review(models.fields.Model):
+class Review(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
