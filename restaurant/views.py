@@ -38,3 +38,39 @@ def add_review(request):
             return redirect('home')
             
     return redirect('home')
+
+# CREATE booking
+from django.http import JsonResponse
+import json
+from .models import Reservation
+
+def create_booking(request):
+    """
+    API endpoint to handle the complex multi-table reservation JSON payload 
+    sent from the frontend and save it to PostgreSQL.
+    """
+    if request.method == "POST":
+        try:
+            # Parse the JSON payload sent by JavaScript fetch
+            data = json.loads(request.body)
+            email = data.get('email')
+            tables = data.get('tables', [])
+
+            if not email or not tables:
+                return JsonResponse({'status': 'error', 'message': 'Missing booking details.'}, status=400)
+
+            # Loop through each table configuration and save to the database
+            for table in tables:
+                Reservation.objects.create(
+                    email=email,
+                    date=table.get('date'),
+                    time=table.get('time'),
+                    guests=int(table.get('guests'))
+                )
+
+            return JsonResponse({'status': 'success', 'message': 'All tables booked successfully!'})
+            
+        except (ValueError, KeyError, json.JSONDecodeError) as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
