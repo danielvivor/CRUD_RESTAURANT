@@ -1,4 +1,4 @@
-// Utility helpers
+// Utility helpers (Retained for reservation management until migrated)
 function save(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
@@ -6,10 +6,6 @@ function save(key, value) {
 function load(key, fallback = []) {
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : fallback;
-}
-
-function stars(n) {
-    return "★".repeat(n) + "☆".repeat(5 - n);
 }
 
 // Mobile Navigation
