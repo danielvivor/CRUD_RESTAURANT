@@ -66,6 +66,7 @@ function updateTableNumbers() {
     });
 }
 
+// Handle Reservation Submit via Django Backend API
 if (multiResForm) {
     multiResForm.addEventListener("submit", e => {
         e.preventDefault();
@@ -73,8 +74,8 @@ if (multiResForm) {
         const bookingEmail = document.getElementById("booking-email").value.trim();
         const tableCards = tablesContainer.querySelectorAll(".table-item");
 
+        // Collect dynamic form rows into a single clean data structure
         let bookingDetails = {
-            id: crypto.randomUUID(),
             email: bookingEmail,
             tables: []
         };
@@ -86,17 +87,40 @@ if (multiResForm) {
             bookingDetails.tables.push({ date, time, guests });
         });
 
-        reservations.push(bookingDetails);
-        save("reservations", reservations);
+        // Fetch Django's CSRF security token value straight from the cookie layer
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        multiResForm.reset();
+        // Post the booking data structure straight to new Django View
+        fetch('/create-booking/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(bookingDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Reset UI on successful booking save
+                multiResForm.reset();
 
-        while (tablesContainer.children.length > 1) {
-            tablesContainer.removeChild(tablesContainer.lastChild);
-        }
+                // Clear out additional dynamic rows, preserving only the baseline card
+                while (tablesContainer.children.length > 1) {
+                    tablesContainer.removeChild(tablesContainer.lastChild);
+                }
 
-        successMsg.style.display = "block";
-        setTimeout(() => successMsg.style.display = "none", 4000);
+                // Flash the visual feedback message container
+                successMsg.style.display = "block";
+                setTimeout(() => successMsg.style.display = "none", 4000);
+            } else {
+                alert("Booking error: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("An error occurred while creating your reservation.");
+        });
     });
 }
 
