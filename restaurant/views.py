@@ -1,10 +1,14 @@
-from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .models import Review # Import Review database model
 
 def home_page(request):
     """
-    Renders the main index.html landing page for Nala Restaurant.
+    Fetches all reviews from PostgreSQL and renders the homepage.
     """
-    return render(request, 'index.html')
+    # Fetch all reviews ordered by the newest submission first
+    all_reviews = Review.objects.all().order_by('-created_at')
+    
+    context = {
+        'reviews': all_reviews
+    }
+    return render(request, 'index.html', context)
