@@ -19,3 +19,13 @@ if (navToggle && navContainer) {
         navToggle.setAttribute("aria-expanded", isOpen);
     });
 }
+
+// Infinite Auto-Scrolling for Menu
+document.querySelectorAll(".menu-scroll-track").forEach(track => {
+    const images = Array.from(track.children);
+    images.forEach(img => {
+        const clone = img.cloneNode(true);
+        clone.setAttribute("aria-hidden", "true");
+        track.appendChild(clone);
+    });
+});
