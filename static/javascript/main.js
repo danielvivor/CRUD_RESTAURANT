@@ -29,3 +29,39 @@ document.querySelectorAll(".menu-scroll-track").forEach(track => {
         track.appendChild(clone);
     });
 });
+
+// RESERVATIONS (Temporary Local Storage - Will migrate to Django next!)
+let reservations = load("reservations");
+
+const multiResForm = document.getElementById("multi-reservation-form");
+const addTableBtn = document.getElementById("add-table-btn");
+const tablesContainer = document.getElementById("tables-container");
+const tableTemplate = document.getElementById("table-row-template");
+const successMsg = document.getElementById("booking-success-msg");
+
+if (addTableBtn && tablesContainer && tableTemplate) {
+    addTableBtn.addEventListener("click", () => {
+        const clone = tableTemplate.content.cloneNode(true);
+        tablesContainer.appendChild(clone);
+        updateTableNumbers();
+    });
+}
+
+if (tablesContainer) {
+    tablesContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-table")) {
+            e.target.closest(".table-entry-card").remove();
+            updateTableNumbers();
+        }
+    });
+}
+
+function updateTableNumbers() {
+    const tableCards = tablesContainer.querySelectorAll(".table-item");
+    tableCards.forEach((card, index) => {
+        const numberSpan = card.querySelector(".table-number");
+        if (numberSpan) {
+            numberSpan.textContent = `Table #${index + 1}`;
+        }
+    });
+}
