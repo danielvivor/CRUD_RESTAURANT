@@ -65,3 +65,84 @@ function updateTableNumbers() {
         }
     });
 }
+
+if (multiResForm) {
+    multiResForm.addEventListener("submit", e => {
+        e.preventDefault();
+
+        const bookingEmail = document.getElementById("booking-email").value.trim();
+        const tableCards = tablesContainer.querySelectorAll(".table-item");
+
+        let bookingDetails = {
+            id: crypto.randomUUID(),
+            email: bookingEmail,
+            tables: []
+        };
+
+        tableCards.forEach(card => {
+            const date = card.querySelector(".table-date").value;
+            const time = card.querySelector(".table-time").value;
+            const guests = card.querySelector(".table-guests").value;
+            bookingDetails.tables.push({ date, time, guests });
+        });
+
+        reservations.push(bookingDetails);
+        save("reservations", reservations);
+
+        multiResForm.reset();
+
+        while (tablesContainer.children.length > 1) {
+            tablesContainer.removeChild(tablesContainer.lastChild);
+        }
+
+        successMsg.style.display = "block";
+        setTimeout(() => successMsg.style.display = "none", 4000);
+    });
+}
+
+const viewResForm = document.getElementById("view-reservation-form");
+const resResultsContainer = document.getElementById("reservation-results");
+
+if (viewResForm) {
+    viewResForm.addEventListener("submit", e => {
+        e.preventDefault();
+        const searchEmail = document.getElementById("search-email").value.trim();
+        const userBookings = reservations.filter(r => r.email === searchEmail);
+
+        if (userBookings.length === 0) {
+            resResultsContainer.innerHTML = `<p style="color: #d9534f;">No bookings found for ${searchEmail}.</p>`;
+            return;
+        }
+
+        let html = "";
+        userBookings.forEach(booking => {
+            html += `
+        <div class="result-card">
+            <div class="status-badge">Confirmed</div>
+            <p><strong>Booking ID:</strong> ${booking.id.split('-')[0]}</p>
+            <p><strong>Tables Booked:</strong> ${booking.tables.length}</p>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 0.9em; color: var(--color-text-muted);">
+                ${booking.tables.map((t, i) => `<li>Table ${i + 1}: ${t.date} at ${t.time} for ${t.guests}</li>`).join('')}
+            </ul>
+            <button class="btn-outline full-width target-cancel-btn" style="margin-top: 1rem; padding: 0.5rem;" data-id="${booking.id}">
+                Cancel Booking
+            </button>
+        </div>
+    `;
+        });
+        resResultsContainer.innerHTML = html;
+    });
+}
+
+if (resResultsContainer) {
+    resResultsContainer.addEventListener("click", e => {
+        if (e.target.classList.contains("target-cancel-btn")) {
+            const bookingId = e.target.dataset.id;
+            reservations = reservations.filter(r => r.id !== bookingId);
+            save("reservations", reservations);
+            if (viewResForm) {
+                viewResForm.dispatchEvent(new Event("submit"));
+            }
+        }
+    });
+}
