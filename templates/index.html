@@ -293,7 +293,7 @@
                             <p>Share your dining experience with us.</p>
                         </header>
 
-                        <form id="review-form" class="form">
+                        <form id="review-form" class="form" method="POST" action="{% url 'add_review' %}"> {% csrf_token %}
                             <input type="hidden" id="review-id" />
                             <div class="form-field">
                                 <label>Your Name *</label>
