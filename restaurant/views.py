@@ -87,7 +87,7 @@ def view_reservations(request):
         return JsonResponse({'status': 'error', 'message': 'Email parameter is required.'}, status=400)
         
     # Fetch matching reservations from the database
-    bookings = Reservation.objects.filter(email=email).order_by('date', 'time')
+    bookings = Reservation.objects.filter(email__iexact=email).order_by('date', 'time')
     
     # Serialize the database objects into a clean dictionary list
     booking_list = []
