@@ -74,3 +74,45 @@ def create_booking(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
+
+from django.views.decorators.csrf import csrf_protect
+
+def view_reservations(request):
+    """
+    API endpoint to query PostgreSQL and return all active bookings 
+    associated with a specific email address as JSON data.
+    """
+    email = request.GET.get('email', '').strip()
+    if not email:
+        return JsonResponse({'status': 'error', 'message': 'Email parameter is required.'}, status=400)
+        
+    # Fetch matching reservations from the database
+    bookings = Reservation.objects.filter(email=email).order_by('date', 'time')
+    
+    # Serialize the database objects into a clean dictionary list
+    booking_list = []
+    for booking in bookings:
+        booking_list.append({
+            'id': booking.id,
+            'date': booking.date.strftime('%Y-%m-%d'),
+            'time': booking.time.strftime('%H:%M'),
+            'guests': booking.guests
+        })
+        
+    return JsonResponse({'status': 'success', 'reservations': booking_list})
+
+
+def cancel_reservation(request, booking_id):
+    """
+    API endpoint to delete a specific reservation row out of naladb 
+    using its primary key ID.
+    ```"""
+    if request.method == "POST":
+        try:
+            booking = Reservation.objects.get(id=booking_id)
+            booking.delete()
+            return JsonResponse({'status': 'success', 'message': 'Reservation cancelled successfully.'})
+        except Reservation.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Reservation not found.'}, status=404)
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
