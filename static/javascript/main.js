@@ -218,6 +218,15 @@ if (resResultsContainer) {
 // Handle Inline Dashboard Actions (Edit View Toggles and Saving Updates)
 if (resResultsContainer) {
     resResultsContainer.addEventListener("click", e => {
+        // Action: Completely clear the results panel and reset the search form input
+        if (e.target.classList.contains("target-clear-results-btn")) {
+            resResultsContainer.innerHTML = "";
+            if (viewResForm) {
+                viewResForm.reset(); 
+            }
+            return; // Exit out early since we just destroyed the cards
+        }
+
         const cardNode = e.target.closest(".result-card");
         if (!cardNode) return;
 
