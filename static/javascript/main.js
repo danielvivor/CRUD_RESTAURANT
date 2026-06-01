@@ -132,6 +132,12 @@ if (viewResForm) {
 
                 // Map database results directly into visual HTML cards with dual view/edit structures
                 let html = "";
+
+                <button class="btn-outline full-width target-clear-results-btn" 
+                            style="margin-bottom: 1.5rem; border-color: #d9534f; color: #d9534f;">
+                        ✕ Close Search Results
+                    </button>
+                    
                 data.reservations.forEach(booking => {
                     html += `
                         <div class="result-card" id="card-${booking.id}">
