@@ -116,3 +116,38 @@ def cancel_reservation(request, booking_id):
             return JsonResponse({'status': 'error', 'message': 'Reservation not found.'}, status=404)
             
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
+
+def update_reservation(request, booking_id):
+    """
+    API endpoint to modify an existing reservation's date, time, 
+    and guest count based on its primary key ID.
+    """
+    if request.method == "POST":
+        try:
+            # Parse the incoming updated parameters
+            data = json.loads(request.body)
+            new_date = data.get('date')
+            new_time = data.get('time')
+            new_guests = data.get('guests')
+
+            # Basic backend validation check
+            if not new_date or not new_time or not new_guests:
+                return JsonResponse({'status': 'error', 'message': 'All fields are required.'}, status=400)
+
+            # Retrieve the booking row from PostgreSQL
+            booking = Reservation.objects.get(id=booking_id)
+            
+            # Commit the updated values to the object fields
+            booking.date = new_date
+            booking.time = new_time
+            booking.guests = int(new_guests)
+            booking.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Reservation updated successfully.'})
+
+        except Reservation.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Reservation not found.'}, status=404)
+        except (ValueError, json.JSONDecodeError) as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
