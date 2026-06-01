@@ -4,5 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.home_page, name='home'),
     path('add-review/', views.add_review, name='add_review'),
-    path('create-booking/', views.create_booking, name='create_booking'), # New path
+    path('create-booking/', views.create_booking, name='create_booking'),
+    path('view-reservations/', views.view_reservations, name='view_reservations'), # New lookup route
+    path('cancel-reservation/<int:booking_id>/', views.cancel_reservation, name='cancel_reservation'), # New delete route
 ]
