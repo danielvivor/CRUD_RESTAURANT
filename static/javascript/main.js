@@ -208,3 +208,57 @@ if (resResultsContainer) {
         }
     });
 }
+
+// Handle Inline Dashboard Actions (Edit View Toggles and Saving Updates)
+if (resResultsContainer) {
+    resResultsContainer.addEventListener("click", e => {
+        const cardNode = e.target.closest(".result-card");
+        if (!cardNode) return;
+
+        const viewMode = cardNode.querySelector(".view-mode-container");
+        const editMode = cardNode.querySelector(".edit-mode-container");
+        const bookingId = e.target.dataset.id;
+
+        // Action A: Toggle open the Edit Panel Layout
+        if (e.target.classList.contains("target-edit-btn")) {
+            viewMode.style.display = "none";
+            editMode.style.display = "block";
+        }
+
+        // Action B: Close Edit Panel without committing data changes
+        if (e.target.classList.contains("target-close-btn")) {
+            editMode.style.display = "none";
+            viewMode.style.display = "block";
+        }
+
+        // Action C: Collect updated data fields and dispatch HTTP POST request
+        if (e.target.classList.contains("target-save-btn")) {
+            const updatedDetails = {
+                date: editMode.querySelector(".edit-date").value,
+                time: editMode.querySelector(".edit-time").value,
+                guests: editMode.querySelector(".edit-guests").value
+            };
+
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch(`/update-reservation/${bookingId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(updatedDetails)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Re-trigger form query operation to fetch clean data and reset views natively
+                    viewResForm.dispatchEvent(new Event("submit"));
+                } else {
+                    alert("Update failed: " + data.message);
+                }
+            })
+            .catch(error => console.error('Error modifying reservation records:', error));
+        }
+    });
+}
