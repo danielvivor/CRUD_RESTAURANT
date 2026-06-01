@@ -53,7 +53,7 @@ def create_booking(request):
         try:
             # Parse the JSON payload sent by JavaScript fetch
             data = json.loads(request.body)
-            email = data.get('email')
+            email = data.get('email', '').strip().lower()
             tables = data.get('tables', [])
 
             if not email or not tables:
