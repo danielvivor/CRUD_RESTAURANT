@@ -26,9 +26,26 @@ const tablesContainer = document.getElementById("tables-container");
 const tableTemplate = document.getElementById("table-row-template");
 const successMsg = document.getElementById("booking-success-msg");
 
+// Function to generate today's date formatted perfectly as YYYY-MM-DD
+function getTodayString() {
+    return new Date().toISOString().split('T')[0];
+}
+
+// Set min date constraint for any default baseline row already present in the DOM on load
+document.querySelectorAll(".table-date").forEach(input => {
+    input.min = getTodayString();
+});
+
 if (addTableBtn && tablesContainer && tableTemplate) {
     addTableBtn.addEventListener("click", () => {
         const clone = tableTemplate.content.cloneNode(true);
+        
+        // Secure the newly cloned dynamic row option before appending it to the workspace
+        const dateInput = clone.querySelector(".table-date");
+        if (dateInput) {
+            dateInput.min = getTodayString();
+        }
+        
         tablesContainer.appendChild(clone);
         updateTableNumbers();
     });
@@ -131,12 +148,13 @@ if (viewResForm) {
                 }
 
                 // Map database results directly into visual HTML cards with dual view/edit structures
-                let html = "";
-
-                <button class="btn-outline full-width target-clear-results-btn" 
+                // 1. Start with a clean, full-width "Close Panel" button at the top of the results inside backticks
+                let html = `
+                    <button class="btn-outline full-width target-clear-results-btn" 
                             style="margin-bottom: 1.5rem; border-color: #d9534f; color: #d9534f;">
                         ✕ Close Search Results
                     </button>
+                `;
                     
                 data.reservations.forEach(booking => {
                     html += `
@@ -276,4 +294,16 @@ if (resResultsContainer) {
             .catch(error => console.error('Error modifying reservation records:', error));
         }
     });
+
+    // Action A: Toggle open the Edit Panel Layout
+        if (e.target.classList.contains("target-edit-btn")) {
+            viewMode.style.display = "none";
+            editMode.style.display = "block";
+            
+            // Prevent users from changing an existing active booking to a day in the past
+            const editDateInput = editMode.querySelector(".edit-date");
+            if (editDateInput) {
+                editDateInput.min = getTodayString();
+            }
+        }
 }
