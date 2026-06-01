@@ -1,6 +1,14 @@
-# READ
 from django.shortcuts import render, redirect
-from .models import Review # Import Review database model
+from django.http import JsonResponse
+from django.utils import timezone  # Added for time validation
+from django.views.decorators.csrf import csrf_protect
+from datetime import datetime       # Added for string-to-datetime parsing
+import json
+from .models import Review, Reservation # Consolidated models import
+
+# =========================================================================
+# REVIEWS (READ & CREATE)
+# =========================================================================
 
 def home_page(request):
     """
@@ -14,7 +22,7 @@ def home_page(request):
     }
     return render(request, 'index.html', context)
 
-# CREATE
+
 def add_review(request):
     """
     Processes the front-end form submission and saves a new review to naladb.
@@ -26,7 +34,7 @@ def add_review(request):
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
 
-        # backend validation
+        # Backend validation
         if name and email and rating:
             Review.objects.create(
                 name=name,
@@ -39,10 +47,10 @@ def add_review(request):
             
     return redirect('home')
 
-# CREATE booking
-from django.http import JsonResponse
-import json
-from .models import Reservation
+
+# =========================================================================
+# RESERVATIONS (CRUD ENDPOINTS)
+# =========================================================================
 
 def create_booking(request):
     """
@@ -61,10 +69,22 @@ def create_booking(request):
 
             # Loop through each table configuration and save to the database
             for table in tables:
+                t_date = table.get('date')
+                t_time = table.get('time')
+                
+                # NEW Logic: Combine and parse date/time strings into a naive datetime object
+                booking_dt = datetime.strptime(f"{t_date} {t_time}", "%Y-%m-%d %H:%M")
+                # NEW Logic: Get current localized server time stripped of timezone attachments
+                current_dt = timezone.localtime(timezone.now()).replace(tzinfo=None)
+                
+                # NEW Logic: Block user if the selected timeframe is in the past
+                if booking_dt < current_dt:
+                    return JsonResponse({'status': 'error', 'message': 'Reservation date and time cannot be in the past.'}, status=400)
+
                 Reservation.objects.create(
                     email=email,
-                    date=table.get('date'),
-                    time=table.get('time'),
+                    date=t_date,
+                    time=t_time,
                     guests=int(table.get('guests'))
                 )
 
@@ -75,7 +95,6 @@ def create_booking(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
 
-from django.views.decorators.csrf import csrf_protect
 
 def view_reservations(request):
     """
@@ -106,7 +125,7 @@ def cancel_reservation(request, booking_id):
     """
     API endpoint to delete a specific reservation row out of naladb 
     using its primary key ID.
-    ```"""
+    """
     if request.method == "POST":
         try:
             booking = Reservation.objects.get(id=booking_id)
@@ -116,6 +135,7 @@ def cancel_reservation(request, booking_id):
             return JsonResponse({'status': 'error', 'message': 'Reservation not found.'}, status=404)
             
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
+
 
 def update_reservation(request, booking_id):
     """
@@ -133,6 +153,13 @@ def update_reservation(request, booking_id):
             # Basic backend validation check
             if not new_date or not new_time or not new_guests:
                 return JsonResponse({'status': 'error', 'message': 'All fields are required.'}, status=400)
+
+            # NEW Logic: Validate that updated times have not already passed
+            booking_dt = datetime.strptime(f"{new_date} {new_time}", "%Y-%m-%d %H:%M")
+            current_dt = timezone.localtime(timezone.now()).replace(tzinfo=None)
+            
+            if booking_dt < current_dt:
+                return JsonResponse({'status': 'error', 'message': 'Cannot update reservation to a past date or time.'}, status=400)
 
             # Retrieve the booking row from PostgreSQL
             booking = Reservation.objects.get(id=booking_id)
