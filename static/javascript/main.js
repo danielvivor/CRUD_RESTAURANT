@@ -169,25 +169,33 @@ if (viewResForm) {
     });
 }
 
+// Handle Reservation Cancellation via Django Backend API
 if (resResultsContainer) {
     resResultsContainer.addEventListener("click", e => {
         if (e.target.classList.contains("target-cancel-btn")) {
             const bookingId = e.target.dataset.id;
-            reservations = reservations.filter(r => r.id !== bookingId);
-            save("reservations", reservations);
-            if (viewResForm) {
-                viewResForm.dispatchEvent(new Event("submit"));
+            
+            if (confirm("Are you sure you want to cancel this reservation?")) {
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                // Dispatch a secure POST request to hit our backend deletion route
+                fetch(`/cancel-reservation/${bookingId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Re-trigger the search form submit event to seamlessly refresh the listing layout
+                        viewResForm.dispatchEvent(new Event("submit"));
+                    } else {
+                        alert("Cancellation failed: " + data.message);
+                    }
+                })
+                .catch(error => console.error('Error deleting reservation:', error));
             }
         }
-    });
-}
-
-// Contact Form Frontend Interactive Fallback
-const contactForm = document.getElementById("contact-form");
-if (contactForm) {
-    contactForm.addEventListener("submit", e => {
-        e.preventDefault();
-        alert("Your message has been sent!");
-        contactForm.reset();
     });
 }
