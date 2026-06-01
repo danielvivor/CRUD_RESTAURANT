@@ -130,20 +130,42 @@ if (viewResForm) {
                     return;
                 }
 
-                // Map database results directly into visual HTML cards
+                // Map database results directly into visual HTML cards with dual view/edit structures
                 let html = "";
                 data.reservations.forEach(booking => {
                     html += `
-                        <div class="result-card">
-                            <div class="status-badge">Confirmed</div>
-                            <p><strong>Booking ID:</strong> RES-${booking.id}</p>
-                            <p><strong>Details:</strong> ${booking.date} at ${booking.time}</p>
-                            <p><strong>Party Size:</strong> ${booking.guests} Guests</p>
-                            <button class="btn-outline full-width target-cancel-btn" 
-                                    style="margin-top: 1rem; padding: 0.5rem;" 
-                                    data-id="${booking.id}">
-                                Cancel Booking
-                            </button>
+                        <div class="result-card" id="card-${booking.id}">
+                            <div class="view-mode-container">
+                                <div class="status-badge">Confirmed</div>
+                                <p><strong>Booking ID:</strong> RES-${booking.id}</p>
+                                <p><strong>Details:</strong> <span class="disp-date">${booking.date}</span> at <span class="disp-time">${booking.time}</span></p>
+                                <p><strong>Party Size:</strong> <span class="disp-guests">${booking.guests}</span> Guests</p>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                    <button class="btn btn-primary target-edit-btn" style="flex: 1; padding: 0.5rem;" data-id="${booking.id}">Edit</button>
+                                    <button class="btn-outline target-cancel-btn" style="flex: 1; padding: 0.5rem; color: #d9534f; border-color: #d9534f;" data-id="${booking.id}">Cancel</button>
+                                </div>
+                            </div>
+
+                            <div class="edit-mode-container" style="display: none; margin-top: 0.5rem;">
+                                <div class="status-badge" style="background-color: var(--color-gold-dark);">Editing Mode</div>
+                                <div class="form-field" style="margin-bottom: 0.5rem;">
+                                    <label style="font-size: 0.85em;">New Date</label>
+                                    <input type="date" class="edit-date" value="${booking.date}" required />
+                                </div>
+                                <div class="form-field" style="margin-bottom: 0.5rem;">
+                                    <label style="font-size: 0.85em;">New Time</label>
+                                    <input type="time" class="edit-time" value="${booking.time}" required />
+                                </div>
+                                <div class="form-field" style="margin-bottom: 1rem;">
+                                    <label style="font-size: 0.85em;">Guests</label>
+                                    <input type="number" class="edit-guests" value="${booking.guests}" min="1" max="20" required />
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary target-save-btn" style="flex: 1; padding: 0.5rem;" data-id="${booking.id}">Save</button>
+                                    <button class="btn-outline target-close-btn" style="flex: 1; padding: 0.5rem;" data-id="${booking.id}">Cancel</button>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
