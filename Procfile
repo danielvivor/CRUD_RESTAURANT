@@ -1,0 +1,1 @@
+web: gunicorn nala_project.wsgi
