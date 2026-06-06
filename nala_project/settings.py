@@ -28,7 +28,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 SECRET_KEY = 'django-insecure-5*jbw4)b6anhhc*hti2gx1x&r#s1!9bk45cg7x7qvh&26f&*_n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.herokuapp.com']
 
@@ -131,3 +131,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Tell Django where to send users after they log in or out
+LOGIN_REDIRECT_URL = 'home'   # Redirects to your home_page view
+LOGOUT_REDIRECT_URL = 'home'  # Redirects back to the homepage after logging out
+LOGIN_URL = 'login'           # Redirects users here if they try to access a protected page
