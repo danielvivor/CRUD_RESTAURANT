@@ -207,17 +207,36 @@
                     <p>Fill out the details for your first table. Add more tables for larger groups.</p>
                 </header>
 
-                <div class="dashboard-grid">
+                {% if not user.is_authenticated %}
+                <div class="auth-notice" style="background-color: #f8d7da; color: #721c24; padding: 1rem; margin-bottom: 1.5rem; text-align: center; border-radius: 4px; border: 1px solid #f5c6cb; width: 100%;">
+                    <strong>Notice:</strong> You can explore our reservations services below, but you must 
+                    <a href="{% url 'login' %}" style="text-decoration: underline; color: #721c24; font-weight: bold;">Log In</a> 
+                    or 
+                    <a href="{% url 'register' %}" style="text-decoration: underline; color: #721c24; font-weight: bold;">Register</a> an account.
+                </div>
+                {% endif %}
+
+                <div class="dashboard-grid {% if not user.is_authenticated %}logged-out-preview{% endif %}" 
+                     {% if not user.is_authenticated %}style="opacity: 0.75;"{% endif %}>
 
                     <article class="dashboard-column">
                         <form id="multi-reservation-form"> {% csrf_token %}
-                            <div class="table-entry-card" style="margin-bottom: 1rem; border-color: var(--color-gold);">
+                            
+                            {% if user.is_authenticated %}
+                            <div class="table-entry-card" style="margin-bottom: 1rem; border-color: var(--color-gold); background-color: #f9f9f9;">
                                 <div class="form-field">
-                                    <label for="booking-email">Booking Email*</label>
-                                    <input type="email" id="booking-email" name="booking-email"
-                                        placeholder="name@example.com" required />
+                                    <label for="booking-email">Booking Email</label>
+                                    <input type="email" id="booking-email" name="booking-email" value="{{ user.email }}" readonly style="background-color: #e9ecef; cursor: not-allowed;" />
                                 </div>
                             </div>
+                            {% else %}
+                            <div class="table-entry-card" style="margin-bottom: 1rem; border-color: #ccc;">
+                                <div class="form-field">
+                                    <label for="booking-email">Booking Email*</label>
+                                    <input type="email" id="booking-email" name="booking-email" placeholder="name@example.com" disabled style="cursor: not-allowed;" />
+                                </div>
+                            </div>
+                            {% endif %}
 
                             <div id="tables-container">
                                 <div class="table-entry-card table-item">
@@ -227,29 +246,32 @@
                                     <div class="form-row-grid">
                                         <div class="form-field">
                                             <label>Date</label>
-                                            <input type="date" class="table-date" required />
+                                            <input type="date" class="table-date" required {% if not user.is_authenticated %}disabled{% endif %} />
                                         </div>
                                         <div class="form-field">
                                             <label>Time</label>
-                                            <input type="time" class="table-time" required />
+                                            <input type="time" class="table-time" required {% if not user.is_authenticated %}disabled{% endif %} />
                                         </div>
                                         <div class="form-field">
                                             <label>Guests</label>
-                                            <input type="number" class="table-guests" min="1" max="12" value="2"
-                                                required />
+                                            <input type="number" class="table-guests" min="1" max="12" value="2" required {% if not user.is_authenticated %}disabled{% endif %} />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-actions" style="margin-top: 1rem;">
-                                <button type="button" id="add-table-btn" class="btn btn-outline full-width"
-                                    style="margin-bottom: 1rem;">+ Add Another Table</button>
-                                <button type="submit" class="btn btn-primary full-width">Confirm All Bookings</button>
+                                <button type="button" id="add-table-btn" class="btn btn-outline full-width" style="margin-bottom: 1rem;"
+                                    {% if not user.is_authenticated %}disabled style="opacity: 0.5; cursor: not-allowed;"{% endif %}>
+                                    + Add Another Table
+                                </button>
+                                <button type="submit" class="btn btn-primary full-width"
+                                    {% if not user.is_authenticated %}disabled style="opacity: 0.5; cursor: not-allowed; background-color: #6c757d; border-color: #6c757d;"{% endif %}>
+                                    Confirm All Bookings
+                                </button>
                             </div>
 
-                            <div id="booking-success-msg" class="result-card"
-                                style="display: none; margin-top: 1rem; border-color: #27ae60;">
+                            <div id="booking-success-msg" class="result-card" style="display: none; margin-top: 1rem; border-color: #27ae60;">
                                 <div class="status-badge">Success</div>
                                 <p>Your booking has been saved!</p>
                             </div>
@@ -261,14 +283,20 @@
                             <h2>Manage My Booking</h2>
                         </header>
 
+                        {% if user.is_authenticated %}
                         <form id="view-reservation-form">
                             <div class="form-field">
                                 <label>Email used for Booking(s)</label>
-                                <input type="email" id="search-email" placeholder="name@example.com" required />
+                                <input type="email" id="search-email" value="{{ user.email }}" readonly style="background-color: #e9ecef; cursor: not-allowed;" required />
                             </div>
-                            <button type="submit" class="btn btn-outline full-width" style="margin-top: 1rem;">Find My
-                                Table(s)</button>
+                            <button type="submit" class="btn btn-outline full-width" style="margin-top: 1rem;">Find My Table(s)</button>
                         </form>
+                        {% else %}
+                        <div style="text-align: center; padding: 1.5rem; border: 1px dashed #ccc; border-radius: 4px; background-color: #fafafa;">
+                            <p style="color: #666; margin-bottom: 0;">Management portal locked.</p>
+                            <small>Log in to view active reservations.</small>
+                        </div>
+                        {% endif %}
 
                         <div id="reservation-results" style="margin-top: 1rem;"></div>
                     </article>
