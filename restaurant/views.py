@@ -1,17 +1,15 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from django.utils import timezone  # Added for time validation
+from django.utils import timezone  # Time validation
 from django.views.decorators.csrf import csrf_protect
-from datetime import datetime       # Added for string-to-datetime parsing
+from datetime import datetime       # String-to-datetime parsing
 import json
 from .models import Review, Reservation # Consolidated models import
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 
-# =========================================================================
 # REVIEWS (READ & CREATE)
-# =========================================================================
 
 def register(request):
     """
@@ -64,24 +62,24 @@ def add_review(request):
             
     return redirect('home')
 
-
-# =========================================================================
-# RESERVATIONS (CRUD ENDPOINTS)
-# =========================================================================
+# RESERVATIONS (CRUD ENDPOINTS - SECURED VIA SESSION VALIDATION)
 
 def create_booking(request):
     """
     API endpoint to handle the complex multi-table reservation JSON payload 
-    sent from the frontend and save it to PostgreSQL.
+    sent from the frontend and save it to PostgreSQL. Bound securely to session user.
     """
+    # Strict check preventing unauthenticated access
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Authentication required to create a booking.'}, status=401)
+
     if request.method == "POST":
         try:
             # Parse the JSON payload sent by JavaScript fetch
             data = json.loads(request.body)
-            email = data.get('email', '').strip().lower()
             tables = data.get('tables', [])
 
-            if not email or not tables:
+            if not tables:
                 return JsonResponse({'status': 'error', 'message': 'Missing booking details.'}, status=400)
 
             # Loop through each table configuration and save to the database
@@ -89,17 +87,19 @@ def create_booking(request):
                 t_date = table.get('date')
                 t_time = table.get('time')
                 
-                # NEW Logic: Combine and parse date/time strings into a naive datetime object
+                # Combine and parse date/time strings into a naive datetime object
                 booking_dt = datetime.strptime(f"{t_date} {t_time}", "%Y-%m-%d %H:%M")
-                # NEW Logic: Get current localized server time stripped of timezone attachments
+                # Get current localized server time stripped of timezone attachments
                 current_dt = timezone.localtime(timezone.now()).replace(tzinfo=None)
                 
-                # NEW Logic: Block user if the selected timeframe is in the past
+                # Block user if the selected timeframe is in the past
                 if booking_dt < current_dt:
                     return JsonResponse({'status': 'error', 'message': 'Reservation date and time cannot be in the past.'}, status=400)
 
+                # Securely bind table records to the active session user
                 Reservation.objects.create(
-                    email=email,
+                    user=request.user,
+                    email=request.user.email, # Implicitly uses account email to prevent form tampering
                     date=t_date,
                     time=t_time,
                     guests=int(table.get('guests'))
@@ -116,14 +116,14 @@ def create_booking(request):
 def view_reservations(request):
     """
     API endpoint to query PostgreSQL and return all active bookings 
-    associated with a specific email address as JSON data.
+    belonging exclusively to the currently authenticated user session.
     """
-    email = request.GET.get('email', '').strip()
-    if not email:
-        return JsonResponse({'status': 'error', 'message': 'Email parameter is required.'}, status=400)
+    # Strict check preventing unauthenticated access
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Authentication required to view bookings.'}, status=401)
         
-    # Fetch matching reservations from the database
-    bookings = Reservation.objects.filter(email__iexact=email).order_by('date', 'time')
+    # Requirement 3.1 & 3.3: Filter queries exclusively by the logged-in session user pointer
+    bookings = Reservation.objects.filter(user=request.user).order_by('date', 'time')
     
     # Serialize the database objects into a clean dictionary list
     booking_list = []
@@ -141,15 +141,20 @@ def view_reservations(request):
 def cancel_reservation(request, booking_id):
     """
     API endpoint to delete a specific reservation row out of naladb 
-    using its primary key ID.
+    using its primary key ID, ensuring ownership check passes.
     """
+    # Strict check preventing unauthenticated access
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Authentication required to cancel bookings.'}, status=401)
+
     if request.method == "POST":
         try:
-            booking = Reservation.objects.get(id=booking_id)
+            # Prevents horizontal privilege escalation by making sure the booking belongs to this user
+            booking = Reservation.objects.get(id=booking_id, user=request.user)
             booking.delete()
             return JsonResponse({'status': 'success', 'message': 'Reservation cancelled successfully.'})
         except Reservation.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Reservation not found.'}, status=404)
+            return JsonResponse({'status': 'error', 'message': 'Reservation not found or access denied.'}, status=404)
             
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
 
@@ -157,8 +162,12 @@ def cancel_reservation(request, booking_id):
 def update_reservation(request, booking_id):
     """
     API endpoint to modify an existing reservation's date, time, 
-    and guest count based on its primary key ID.
+    and guest count based on its primary key ID, ensuring ownership check passes.
     """
+    # Strict check preventing unauthenticated access
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Authentication required to modify bookings.'}, status=401)
+
     if request.method == "POST":
         try:
             # Parse the incoming updated parameters
@@ -171,15 +180,15 @@ def update_reservation(request, booking_id):
             if not new_date or not new_time or not new_guests:
                 return JsonResponse({'status': 'error', 'message': 'All fields are required.'}, status=400)
 
-            # NEW Logic: Validate that updated times have not already passed
+            # Validate that updated times have not already passed
             booking_dt = datetime.strptime(f"{new_date} {new_time}", "%Y-%m-%d %H:%M")
             current_dt = timezone.localtime(timezone.now()).replace(tzinfo=None)
             
             if booking_dt < current_dt:
                 return JsonResponse({'status': 'error', 'message': 'Cannot update reservation to a past date or time.'}, status=400)
 
-            # Retrieve the booking row from PostgreSQL
-            booking = Reservation.objects.get(id=booking_id)
+            # Prevents horizontal privilege escalation by making sure the booking belongs to this user
+            booking = Reservation.objects.get(id=booking_id, user=request.user)
             
             # Commit the updated values to the object fields
             booking.date = new_date
@@ -190,7 +199,7 @@ def update_reservation(request, booking_id):
             return JsonResponse({'status': 'success', 'message': 'Reservation updated successfully.'})
 
         except Reservation.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Reservation not found.'}, status=404)
+            return JsonResponse({'status': 'error', 'message': 'Reservation not found or access denied.'}, status=404)
         except (ValueError, json.JSONDecodeError) as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
