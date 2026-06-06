@@ -14,6 +14,10 @@ import os
 import dj_database_url
 from pathlib import Path
 
+# If the env.py file exists (meaning running locally), import it
+if os.path.isfile('env.py'):
+    import env
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,12 +29,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5*jbw4)b6anhhc*hti2gx1x&r#s1!9bk45cg7x7qvh&26f&*_n'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -75,25 +79,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'nala_project.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-DATABASES = {
+# If a DATABASE_URL environment variable exists, use it to overwrite the database settings!
+if 'DATABASE_URL' in os.environ:
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
+else:
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'naladb',
-        'USER': 'postgres', # pgAdmin username
-        'PASSWORD': 'vaultitpost', # pgAdmin password
+        'USER': 'postgres',
+        'PASSWORD': os.environ.get('LOCAL_DB_PASS'), # Hidden password
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
-
-# If a DATABASE_URL environment variable exists, use it to overwrite the database settings!
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
