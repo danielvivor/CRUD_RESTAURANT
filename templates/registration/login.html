@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log In | Nala Restaurant</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body style="padding: 2rem; max-width: 400px; margin: 0 auto; font-family: sans-serif;">
+    <h2>Log In to Your Account</h2>
+    
+    {% if form.errors %}
+        <p style="color: #c0392b; background: #fdf2f2; padding: 0.5rem; border-radius: 4px;">
+            Please enter a correct username and password. Note that both fields may be case-sensitive.
+        </p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.5rem; background-color: #d4af37; border: none; cursor: pointer;">LOG IN</button>
+    </form>
+    
+    <p style="margin-top: 1.5rem;"><a href="{% url 'register' %}">Don't have an account? Register here.</a></p>
+    <p><a href="{% url 'home' %}">Back to Homepage</a></p>
+</body>
+</html>
