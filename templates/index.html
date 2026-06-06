@@ -92,6 +92,13 @@
                     <li><a href="#reservations">Reservations</a></li>
                     <li><a href="#feedback">Feedback</a></li>
                     <li><a href="#contact">Contact</a></li>
+
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Log Out ({{ user.username }})</a></li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}" target="_blank">Log In</a></li>
+                    <li><a href="{% url 'register' %}" target="_blank">Register</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </header>
@@ -125,9 +132,12 @@
 
                         <div class="menu-scroll">
                             <div class="menu-scroll-track">
-                                <img src="{% static 'images/starters/mezze_platter.jpg' %}" alt="Global Mezze Platter" />
-                                <img src="{% static 'images/starters/spiced_coconut.jpg' %}" alt="Spiced Coconut Soup" />
-                                <img src="{% static 'images/starters/herb_crusted_prawns.jpg' %}" alt="Herb-Crusted Prawns" />
+                                <img src="{% static 'images/starters/mezze_platter.jpg' %}"
+                                    alt="Global Mezze Platter" />
+                                <img src="{% static 'images/starters/spiced_coconut.jpg' %}"
+                                    alt="Spiced Coconut Soup" />
+                                <img src="{% static 'images/starters/herb_crusted_prawns.jpg' %}"
+                                    alt="Herb-Crusted Prawns" />
                             </div>
                         </div>
                     </article>
@@ -142,8 +152,10 @@
 
                         <div class="menu-scroll">
                             <div class="menu-scroll-track">
-                                <img src="{% static 'images/main_courses/moroccan_lamb.jpg' %}" alt="Moroccan Lamb Tagine" />
-                                <img src="{% static 'images/main_courses/thai_green_curry.jpg' %}" alt="Thai Green Curry" />
+                                <img src="{% static 'images/main_courses/moroccan_lamb.jpg' %}"
+                                    alt="Moroccan Lamb Tagine" />
+                                <img src="{% static 'images/main_courses/thai_green_curry.jpg' %}"
+                                    alt="Thai Green Curry" />
                                 <img src="{% static 'images/main_courses/italian_truffle_pasta.jpg' %}"
                                     alt="Italian Truffle Pasta" />
                             </div>
@@ -160,7 +172,8 @@
 
                         <div class="menu-scroll">
                             <div class="menu-scroll-track">
-                                <img src="{% static 'images/desserts/french_creme_brulee.jpg' %}" alt="French Crème Brûlée" />
+                                <img src="{% static 'images/desserts/french_creme_brulee.jpg' %}"
+                                    alt="French Crème Brûlée" />
                                 <img src="{% static 'images/desserts/japanese_matcha.jpg' %}"
                                     alt="Japanese Matcha Cheesecake" />
                                 <img src="{% static 'images/desserts/belgian_chocolate.jpg' %}"
@@ -293,7 +306,7 @@
                             <p>Share your dining experience with us.</p>
                         </header>
 
-                        <form id="review-form" class="form" method="POST" action="{% url 'add_review' %}"> 
+                        <form id="review-form" class="form" method="POST" action="{% url 'add_review' %}">
                             {% csrf_token %}
                             <input type="hidden" id="review-id" />
                             <div class="form-field">
@@ -328,19 +341,21 @@
                             <h2>What Our Guests Say</h2>
                             <p>The latest experiences from our diners.</p>
                         </header>
-                        
+
                         <div id="latest-reviews" class="testimonials-grid">
                             {% for review in reviews %}
-                                <div class="review-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-gold); padding-left: 1rem;">
-                                    <h3>{{ review.name }}</h3>
-                                    <p class="stars" style="color: var(--color-gold-dark);">
-                                        Rating: {{ review.rating }} / 5
-                                    </p>
-                                    <p class="testimonial-text">"{{ review.comment }}"</p>
-                                    <small style="color: var(--color-text-muted);">Posted on: {{ review.created_on|date:"d M Y" }}</small>
-                                </div>
+                            <div class="review-card"
+                                style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-gold); padding-left: 1rem;">
+                                <h3>{{ review.name }}</h3>
+                                <p class="stars" style="color: var(--color-gold-dark);">
+                                    Rating: {{ review.rating }} / 5
+                                </p>
+                                <p class="testimonial-text">"{{ review.comment }}"</p>
+                                <small style="color: var(--color-text-muted);">Posted on: {{ review.created_on|date:"d M
+                                    Y" }}</small>
+                            </div>
                             {% empty %}
-                                <p>No reviews yet. Be the first to leave one!</p>
+                            <p>No reviews yet. Be the first to leave one!</p>
                             {% endfor %}
                         </div>
                     </div>
