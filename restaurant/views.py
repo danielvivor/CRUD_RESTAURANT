@@ -5,10 +5,27 @@ from django.views.decorators.csrf import csrf_protect
 from datetime import datetime       # Added for string-to-datetime parsing
 import json
 from .models import Review, Reservation # Consolidated models import
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 
 # =========================================================================
 # REVIEWS (READ & CREATE)
 # =========================================================================
+
+def register(request):
+    """
+    Renders a standard user registration form and logs the user in upon success.
+    """
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user) # Automatically log them in after signing up
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 def home_page(request):
     """
@@ -178,3 +195,10 @@ def update_reservation(request, booking_id):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
+
+def logout_view(request):
+    """
+    Safely logs out the user via a GET request and redirects them back home.
+    """
+    auth_logout(request)
+    return redirect('home')
