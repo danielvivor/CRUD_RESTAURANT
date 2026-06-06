@@ -209,28 +209,30 @@
 
                 {% if not user.is_authenticated %}
                 <div class="auth-notice" style="background-color: #f8d7da; color: #721c24; padding: 1rem; margin-bottom: 1.5rem; text-align: center; border-radius: 4px; border: 1px solid #f5c6cb; width: 100%;">
-                    <strong>Notice:</strong> You can explore our reservations services below, but you must 
+                    <strong>Notice:</strong> You can explore our layout below, but you must 
                     <a href="{% url 'login' %}" style="text-decoration: underline; color: #721c24; font-weight: bold;">Log In</a> 
                     or 
-                    <a href="{% url 'register' %}" style="text-decoration: underline; color: #721c24; font-weight: bold;">Register</a> an account.
+                    <a href="{% url 'register' %}" style="text-decoration: underline; color: #721c24; font-weight: bold;">Register</a> 
+                    to place or manage table reservations.
                 </div>
                 {% endif %}
 
-                <div class="dashboard-grid {% if not user.is_authenticated %}logged-out-preview{% endif %}" 
-                     {% if not user.is_authenticated %}style="opacity: 0.75;"{% endif %}>
+                <div class="dashboard-grid">
 
                     <article class="dashboard-column">
                         <form id="multi-reservation-form"> {% csrf_token %}
                             
                             {% if user.is_authenticated %}
-                            <div class="table-entry-card" style="margin-bottom: 1rem; border-color: var(--color-gold); background-color: #f9f9f9;">
-                                <div class="form-field">
-                                    <label for="booking-email">Booking Email</label>
-                                    <input type="email" id="booking-email" name="booking-email" value="{{ user.email }}" readonly style="background-color: #e9ecef; cursor: not-allowed;" />
-                                </div>
+                            <div class="user-profile-badge" style="margin-bottom: 1rem; padding: 0.75rem; border: 1px solid var(--color-gold); background-color: #fdfbf7; border-radius: 4px;">
+                                <p style="margin: 0; color: #555; font-size: 0.95rem;">
+                                    Booking as account: <strong style="color: #000;">{{ user.username }}</strong> 
+                                    {% if user.email %}({{ user.email }}){% endif %}
+                                </p>
                             </div>
+                            <input type="hidden" id="booking-email" name="booking-email" 
+                                   value="{% if user.email %}{{ user.email }}{% else %}{{ user.username }}@example.com{% endif %}" />
                             {% else %}
-                            <div class="table-entry-card" style="margin-bottom: 1rem; border-color: #ccc;">
+                            <div class="table-entry-card" style="margin-bottom: 1rem; border-color: #ccc; opacity: 0.7;">
                                 <div class="form-field">
                                     <label for="booking-email">Booking Email*</label>
                                     <input type="email" id="booking-email" name="booking-email" placeholder="name@example.com" disabled style="cursor: not-allowed;" />
@@ -246,15 +248,15 @@
                                     <div class="form-row-grid">
                                         <div class="form-field">
                                             <label>Date</label>
-                                            <input type="date" class="table-date" required {% if not user.is_authenticated %}disabled{% endif %} />
+                                            <input type="date" class="table-date" required {% if not user.is_authenticated %}disabled style="opacity: 0.6; cursor: not-allowed;"{% endif %} />
                                         </div>
                                         <div class="form-field">
                                             <label>Time</label>
-                                            <input type="time" class="table-time" required {% if not user.is_authenticated %}disabled{% endif %} />
+                                            <input type="time" class="table-time" required {% if not user.is_authenticated %}disabled style="opacity: 0.6; cursor: not-allowed;"{% endif %} />
                                         </div>
                                         <div class="form-field">
                                             <label>Guests</label>
-                                            <input type="number" class="table-guests" min="1" max="12" value="2" required {% if not user.is_authenticated %}disabled{% endif %} />
+                                            <input type="number" class="table-guests" min="1" max="12" value="2" required {% if not user.is_authenticated %}disabled style="opacity: 0.6; cursor: not-allowed;"{% endif %} />
                                         </div>
                                     </div>
                                 </div>
@@ -285,14 +287,15 @@
 
                         {% if user.is_authenticated %}
                         <form id="view-reservation-form">
-                            <div class="form-field">
-                                <label>Email used for Booking(s)</label>
-                                <input type="email" id="search-email" value="{{ user.email }}" readonly style="background-color: #e9ecef; cursor: not-allowed;" required />
+                            <input type="hidden" id="search-email" value="{% if user.email %}{{ user.email }}{% else %}{{ user.username }}@example.com{% endif %}" required />
+                            
+                            <div style="padding: 0.5rem 0 1rem 0; color: #555;">
+                                <p style="margin: 0;">Reviewing records for account: <strong>{{ user.username }}</strong></p>
                             </div>
-                            <button type="submit" class="btn btn-outline full-width" style="margin-top: 1rem;">Find My Table(s)</button>
+                            <button type="submit" class="btn btn-outline full-width">Find My Table(s)</button>
                         </form>
                         {% else %}
-                        <div style="text-align: center; padding: 1.5rem; border: 1px dashed #ccc; border-radius: 4px; background-color: #fafafa;">
+                        <div style="text-align: center; padding: 1.5rem; border: 1px dashed #ccc; border-radius: 4px; background-color: #fafafa; opacity: 0.7;">
                             <p style="color: #666; margin-bottom: 0;">Management portal locked.</p>
                             <small>Log in to view active reservations.</small>
                         </div>
