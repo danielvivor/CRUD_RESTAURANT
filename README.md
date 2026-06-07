@@ -2,9 +2,9 @@
 
 Nala Restaurant is a full-stack, data-driven web application designed to streamline dining table allocations and customer testimonials. Built using the Django's Model-Template-View framework and a PostgreSQL database, the platform features a single-page interactive dashboard where users can create, modify, and manage dining reservations asynchronously without continuous page reloads.
 
-Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`
-Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`
-Admin Panel username: ` u45313`
+Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`  
+Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`  
+Admin Panel username: ` u45313`  
 Admin Panel password: `nalarestaurant`
 
 ---
@@ -37,9 +37,29 @@ Nala Restaurant is an intercontinental restaurant seeking a digital space that c
 * **Visual States & Accessibility (WCAG):** Form fields dynamically adapt based on session status. Unauthenticated visitors are met with disabled visual inputs and an explicit warning banner prompting authentication, ensuring clear task flow boundaries before data entry.  
 * **Responsiveness:** Built with a fluid CSS Flexbox and grid container layout (`.dashboard-grid`). On desktop resolutions, columns are aligned side-by-side to optimize wide viewports; on mobile viewports (<768px), elements wrap to a stacked 100% width grid for easy touch targets.
 
-### 2.2 Wireframes vs. Final Implementation  
-•	Original Plan: "A dual-column split-grid desktop view layout where the left half handles active table allocation forms, and the right sidebar column locks down to act exclusively as a management tool".  
-This original wireframe concept was directly implemented using modern CSS Flexbox and Grid rules in index.html. On large desktop displays, the .dashboard-grid class holds a side-by-side balanced alignment. When screen viewports fall below a 768px threshold, media queries shift the layout structure to stack vertically, ensuring touch accessibility and fluid mobile responsiveness as intended during the initial design phase.
+### 2.2 Wireframes and Layout Evolution
+
+The user interface for Nala Restaurant evolved through iterative paper wireframes. The process focused on optimizing screen real estate, reducing layout scroll length, and establishing a fluid responsive system between wide desktop layouts and narrow mobile viewports.
+![](assets/ONE.jpg)
+![](assets/TWO.jpg)
+![](assets/THREE.jpg)
+![](assets/FOUR.jpg)
+
+#### I. Core Design Intentions & Layout Groundwork
+Three core design requirements anchored the layout strategy:
+1.  **A navigation bar with a responsive logo and menu toggle** to preserve usability across differing client screen scales.
+2.  **A prominent main hero call-to-action banner** to immediately establish branding and direct user intent toward booking tasks.
+3.  **A split interface housing multiple sections to reduce length of scroll**, minimizing user friction by grouping high-priority functional components together.
+
+*   **Initial Layout Structure:** The early blueprint aimed to introduce a standard content block flow containing central text headings ("Business Name" and "Motto") sitting directly above a full-width navigation menu bar. Below the header, components were organized using an asymmetric side-by-side grid, separating static restaurant details (Menu, Opening Hours, Gallery) from interactive data sections (Reservations, Reviews).
+*   **Refined Structural Adjustments:** To better achieve the design goal of reducing page scroll length, the architecture was tightened. The full-width navbar was refactored into a modern layout, floating the menu navigation links ("Nav") directly inline with the "Business Name". Static blocks like "Opening Hours" and "Gallery" were consolidated out of the main grid path, prioritizing direct CRUD access by placing the "Reservations" engine and "Manage Bookings" control panels side-by-side in a streamlined dashboard framework.
+*   **Mobile Viewport Adaptation:** To transition the interface smoothly to smaller screens, the horizontal layout columns collapse into a single vertical stream. The desktop navbar condenses into a clean title header ("Logo + Name") accompanied by a JavaScript-driven expandable hamburger icon ("Menu Toggle"). All inline multi-column sections collapse neatly to 100% viewport width cards, keeping the interactive reservation form and review elements easy to read and touch on small devices without horizontal overflow.
+
+
+#### II. Wireframes vs. Final Implementation Notes
+The final live product maintains a direct lineage back to these paper sketches, realizing the "split interface dashboard concept" via a modern CSS Grid framework (`.dashboard-grid`). 
+
+While the early sketches acted as structural placeholders, the live production web app introduces polished design patterns like disabling dynamic form inputs for unauthenticated visitors, styling active validation alerts, and updating the DOM asynchronously using JavaScript `fetch()` handlers. This approach eliminates full page refreshes, successfully keeping the entire customer journey unified on a single screen layout.
 
 ### 2.3 Layout Structure & UI Mockup Reasoning
 * **The Single-Page Dashboard Framework:** To prevent continuous loading screen latency, the booking portal uses asynchronous operations (`main.js`). This layout maintains user focus.
@@ -154,6 +174,20 @@ Frontend interactive logic controlled by `main.js` was manually evaluated agains
 * **Python:** All written backend code (`views.py`, `models.py`, `urls.py`, `admin.py`) follows Python PEP8 style guidelines, standardized indentation and naming conventions.
 * **HTML/CSS:** Frontend layouts have been run through the W3C Markup Validation services, showing clean, error-free markup structure.
 
+### 4.4 Known Bugs & Items to Fix
+#### I. Review Date Formatting Rendering Anomaly
+![](item_to_fix)
+*   **Issue Description:** As captured in the screenshot above, when customer testimonials are pulled from the database and loaded into the frontend interface, the exact date on which they were written fails to render dynamically. Instead, the raw Django Template Language syntax template tag literal string (`{{ review.created_on|date:"d M Y" }}`) is visible to the end user.
+*   **Root Cause Analysis:** This bug occurs due to a structural conflict between the backend server-side templating layer and asynchronous frontend script logic. Because the review cards are rendered or appended on the client side using JavaScript DOM manipulation or API payload parsing, the browser interprets the curly brace markers as static plain text string literals rather than executable server-side code block filters.
+*   **Planned Fix:** 
+    1. Update the backend endpoint to include a pre-formatted string parameter (e.g., `formatted_date`) within the JSON payload array sent to the client.
+    2. Refactor the frontend JavaScript template engine template string literal to target that explicit attribute via native JS template literal syntax (`${review.formatted_date}`) instead of utilizing Django filters directly in HTML elements.
+
+#### II. Unauthenticated Review / Identity Spoofing Vulnerability
+*   **Issue Description:** The review submission engine allows any input string within the "Name" and "Email" form fields without checking them against the active user session database record. 
+*   **Root Cause:** The `Review` model is structured using independent, flat `CharField` and `EmailField` attributes instead of a relational link. Because the backend view processes incoming JSON payloads directly without validating whether the payload email matches `request.user.email`, a logged-in user can submit reviews under an arbitrary name, or bypass session association entirely.
+*   **Planned Fix:** Refactor the custom `Review` model schema to drop the detached text fields and implement a structured relationship hook: `user = models.ForeignKey(User, on_now=models.CASCADE)`. The view controller will then be modified to explicitly bind reviews via `review.user = request.user`, guaranteeing absolute account integrity and blocking identity spoofing.
+
 ---
 
 ## 5. Deployment Guide
@@ -172,7 +206,11 @@ Environmental variables and sensitive secret values are kept completely isolated
 4. Provision the cloud database addon: `heroku addons:create heroku-postgresql:essential-tier-0 -a nalarestaurant`.
 5. Set secret production config parameters in Heroku's environment panel.
 6. Build and push production branch: `git push heroku main`.
-7. Initialize production database schema structures: `heroku run python manage.py migrate`.
+7. Initialize production database schema structures: `heroku run python manage.py migrate`.  
+Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`  
+Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`  
+Admin Panel username: ` u45313`  
+Admin Panel password: `nalarestaurant`
 
 ---
 
