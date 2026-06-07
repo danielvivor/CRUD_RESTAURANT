@@ -2,9 +2,9 @@
 
 Nala Restaurant is a full-stack, data-driven web application designed to streamline dining table allocations and customer testimonials. Built using the Django's Model-Template-View framework and a PostgreSQL database, the platform features a single-page interactive dashboard where users can create, modify, and manage dining reservations asynchronously without continuous page reloads.
 
-Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`
-Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`
-Admin Panel username: ` u45313`
+Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`  
+Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`  
+Admin Panel username: ` u45313`  
 Admin Panel password: `nalarestaurant`
 
 ---
@@ -37,9 +37,28 @@ Nala Restaurant is an intercontinental restaurant seeking a digital space that c
 * **Visual States & Accessibility (WCAG):** Form fields dynamically adapt based on session status. Unauthenticated visitors are met with disabled visual inputs and an explicit warning banner prompting authentication, ensuring clear task flow boundaries before data entry.  
 * **Responsiveness:** Built with a fluid CSS Flexbox and grid container layout (`.dashboard-grid`). On desktop resolutions, columns are aligned side-by-side to optimize wide viewports; on mobile viewports (<768px), elements wrap to a stacked 100% width grid for easy touch targets.
 
-### 2.2 Wireframes vs. Final Implementation  
-•	Original Plan: "A dual-column split-grid desktop view layout where the left half handles active table allocation forms, and the right sidebar column locks down to act exclusively as a management tool".  
-This original wireframe concept was directly implemented using modern CSS Flexbox and Grid rules in index.html. On large desktop displays, the .dashboard-grid class holds a side-by-side balanced alignment. When screen viewports fall below a 768px threshold, media queries shift the layout structure to stack vertically, ensuring touch accessibility and fluid mobile responsiveness as intended during the initial design phase.
+### 2.2 Wireframes and Layout Evolution
+
+The user interface for Nala Restaurant evolved through iterative paper wireframes. The process focused on optimizing screen real estate, reducing layout scroll length, and establishing a fluid responsive system between wide desktop layouts and narrow mobile viewports.
+[!]
+
+#### I. Core Design Intentions & Layout Groundwork
+Three core design requirements anchored the layout strategy:
+1.  **A navigation bar with a responsive logo and menu toggle** to preserve usability across differing client screen scales.
+2.  **A prominent main hero call-to-action banner** to immediately establish branding and direct user intent toward booking tasks.
+3.  **A split interface housing multiple sections to reduce length of scroll**, minimizing user friction by grouping high-priority functional components together.
+
+---
+*   **Initial Layout Structure:** The early blueprint aimed to introduce a standard content block flow containing central text headings ("Business Name" and "Motto") sitting directly above a full-width navigation menu bar. Below the header, components were organized using an asymmetric side-by-side grid, separating static restaurant details (Menu, Opening Hours, Gallery) from interactive data sections (Reservations, Reviews).
+*   **Refined Structural Adjustments:** To better achieve the design goal of reducing page scroll length, the architecture was tightened. The full-width navbar was refactored into a modern layout, floating the menu navigation links ("Nav") directly inline with the "Business Name". Static blocks like "Opening Hours" and "Gallery" were consolidated out of the main grid path, prioritizing direct CRUD access by placing the "Reservations" engine and "Manage Bookings" control panels side-by-side in a streamlined dashboard framework.
+*   **Mobile Viewport Adaptation:** To transition the interface smoothly to smaller screens, the horizontal layout columns collapse into a single vertical stream. The desktop navbar condenses into a clean title header ("Logo + Name") accompanied by a JavaScript-driven expandable hamburger icon ("Menu Toggle"). All inline multi-column sections collapse neatly to 100% viewport width cards, keeping the interactive reservation form and review elements easy to read and touch on small devices without horizontal overflow.
+
+---
+
+#### II. Wireframes vs. Final Implementation Notes
+The final live product maintains a direct lineage back to these paper sketches, realizing the "split interface dashboard concept" via a modern CSS Grid framework (`.dashboard-grid`). 
+
+While the early sketches acted as structural placeholders, the live production web app introduces polished design patterns like disabling dynamic form inputs for unauthenticated visitors, styling active validation alerts, and updating the DOM asynchronously using JavaScript `fetch()` handlers. This approach eliminates full page refreshes, successfully keeping the entire customer journey unified on a single screen layout.
 
 ### 2.3 Layout Structure & UI Mockup Reasoning
 * **The Single-Page Dashboard Framework:** To prevent continuous loading screen latency, the booking portal uses asynchronous operations (`main.js`). This layout maintains user focus.
