@@ -176,7 +176,7 @@ Frontend interactive logic controlled by `main.js` was manually evaluated agains
 
 ### 4.4 Known Bugs & Items to Fix
 #### I. Review Date Formatting Rendering Anomaly
-![](item_to_fix)
+![](item_to_fix.png)
 *   **Issue Description:** As captured in the screenshot above, when customer testimonials are pulled from the database and loaded into the frontend interface, the exact date on which they were written fails to render dynamically. Instead, the raw Django Template Language syntax template tag literal string (`{{ review.created_on|date:"d M Y" }}`) is visible to the end user.
 *   **Root Cause Analysis:** This bug occurs due to a structural conflict between the backend server-side templating layer and asynchronous frontend script logic. Because the review cards are rendered or appended on the client side using JavaScript DOM manipulation or API payload parsing, the browser interprets the curly brace markers as static plain text string literals rather than executable server-side code block filters.
 *   **Planned Fix:** 
