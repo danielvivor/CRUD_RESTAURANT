@@ -1,12 +1,10 @@
 # Nala Restaurant - Multi-Table Reservation System
 
-Nala Restaurant is a full-stack, data-driven web application designed to streamline fine dining table allocations and customer testimonials. Built using the Django MVC (Model-Template-View) framework and a PostgreSQL database, the platform features a single-page interactive dashboard where users can seamlessly create, modify, and manage real-world dining reservations asynchronously without continuous page reloads.
-
-
+Nala Restaurant is a full-stack, data-driven web application designed to streamline dining table allocations and customer testimonials. Built using the Django MVC (Model-Template-View) framework and a PostgreSQL database, the platform features a single-page interactive dashboard where users can create, modify, and manage dining reservations asynchronously without continuous page reloads.
 
 ---
 
-## 1. Project Planning & Agile Methodology (Requirements 1.5, 1.6, 1.12)
+## 1. Project Planning & Agile Methodology
 
 This project was developed following Agile software development methodologies. All significant functionalities, bugs, and deployment tasks were broken down into distinct User Stories, prioritized, and tracked using an Agile Kanban Board.
 
@@ -15,23 +13,22 @@ This project was developed following Agile software development methodologies. A
   * *User Story:* As a visitor, I can create an account and log in so that my reservation records remain isolated and secure.
   * *Goal Mapping:* Satisfies access validation and data-isolation milestones.
 * **EPIC 2: Interactive Reservation Engine**
-  * *User Story:* As an authenticated customer, I want to book multiple tables dynamically in a single session so that I can host large group events.
+  * *User Story:* As an authenticated customer, I want to book multiple tables in a single session so that I can host large group events.
   * *Goal Mapping:* Core domain purpose handling multi-table JSON payloads.
 * **EPIC 3: Booking Self-Management (CRUD)**
-  * *User Story:* As a registered user, I want to view, update, or cancel my upcoming reservations so that I maintain complete control over my booking parameters.
+  * *User Story:* As a registered user, I want to view, update, or cancel my upcoming reservations.
   * *Goal Mapping:* Fulfills complete relational database manipulation criteria.
 * **EPIC 4: Public Feedback & Social Proof**
   * *User Story:* As a diner, I want to submit platform reviews with star ratings to share my culinary experience with future guests.
   * *Goal Mapping:* Ancillary custom data collection and rendering implementation.
-
 ---
 
-## 2. User Experience (UX) Design (Requirement 1.1, 1.13)
+## 2. User Experience (UX) Design
 
 ### Design Strategy & Reasoning
 * **The Single-Page Dashboard Concept:** To minimize user friction and browser loading latency, a dashboard framework was chosen. All interactive components (booking forms, management fields, and feedback panels) are anchored directly onto the main homepage.
 * **Visual States & Accessibility (WCAG):** Form fields dynamically adapt based on session status. Unauthenticated visitors are met with disabled visual inputs and an explicit warning banner prompting authentication, ensuring clear task flow boundaries before data entry.
-* **Responsiveness:** Built with a fluid CSS Flexbox and Grid container layout (`.dashboard-grid`). On desktop resolutions, columns are aligned side-by-side to optimize wide viewports; on mobile viewports (<768px), elements wrap to a stacked 100% width grid for easy touch targets.
+* **Responsiveness:** Built with a fluid CSS Flexbox and grid container layout (`.dashboard-grid`). On desktop resolutions, columns are aligned side-by-side to optimize wide viewports; on mobile viewports (<768px), elements wrap to a stacked 100% width grid for easy touch targets.
 
 ### Architecture & System Flow Diagrams
 The application handles structural information through a synchronous relational ecosystem:
