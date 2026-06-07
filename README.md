@@ -5,7 +5,7 @@ Nala Restaurant is a full-stack, data-driven web application designed to streaml
 Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`  
 Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`  
 Admin Panel username: ` u45313`  
-Admin Panel password: `nalarestaurant`
+Admin Panel password: `nalarestaurant`  
 Email Address associated with Admin Panel: `danielvivor@yahoo.com`
 
 ---
@@ -211,7 +211,7 @@ Environmental variables and sensitive secret values are kept completely isolated
 Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`  
 Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`  
 Admin Panel username: ` u45313`  
-Admin Panel password: `nalarestaurant`
+Admin Panel password: `nalarestaurant`  
 Email Address associated with Admin Panel: `danielvivor@yahoo.com`
 
 ---
