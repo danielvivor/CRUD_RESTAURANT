@@ -6,6 +6,7 @@ Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`
 Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`  
 Admin Panel username: ` u45313`  
 Admin Panel password: `nalarestaurant`
+Email Address associated with Admin Panel: `danielvivor@yahoo.com`
 
 ---
 
@@ -211,6 +212,7 @@ Live web address: `https://nalarestaurant-c999be5df618.herokuapp.com/`
 Admin Panel: `https://nalarestaurant-c999be5df618.herokuapp.com/admin/login/?next=/admin/`  
 Admin Panel username: ` u45313`  
 Admin Panel password: `nalarestaurant`
+Email Address associated with Admin Panel: `danielvivor@yahoo.com`
 
 ---
 
